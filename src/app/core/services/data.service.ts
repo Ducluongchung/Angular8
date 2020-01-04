@@ -53,6 +53,8 @@ export class DataService {
       .pipe(catchError(this.handleError));
 
   }
+
+  // post file
   postFile(uri: string, data?: any) {
     let newHeader = new HttpHeaders();
     newHeader.set("Authorization", "Bearer " + this._authenService.getLoggedInUser().access_token);
@@ -60,6 +62,7 @@ export class DataService {
       .pipe(catchError(this.handleError));
   }
 
+  // handleError
   public handleError(error: any) {
     if (error.status == 401) {
       localStorage.removeItem(SystemConstants.CURRENT_USER);
@@ -74,7 +77,6 @@ export class DataService {
     else {
       let errMsg = JSON.parse(error._body).Message;
       this._notificationService.printErrorMessage(errMsg);
-
       return Observable.throw(errMsg);
     }
   }
