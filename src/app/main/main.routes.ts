@@ -9,6 +9,7 @@ export const mainRoutes: Routes =
                     { path: '', redirectTo: 'home', pathMatch: 'full' },
                     { path: 'user', loadChildren: './user/user.module#UserModule' },
                     { path: 'home', loadChildren: './home/home.module#HomeModule' },
+                    { path: 'profile', loadChildren: './profile/profile.module#ProfileModule' }
                 ]
         }
     ]

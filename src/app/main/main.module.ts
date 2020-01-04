@@ -7,12 +7,14 @@ import {UserModule} from './user/user.module'
 import {HomeModule} from './home/home.module'
 import { AuthenService } from '../core/services/authen.service';
 import { UtilityService } from '../core/services/utility.service';
+import { ProfileModule } from './profile/profile.module';
 @NgModule({
   declarations: [MainComponent],
   imports: [
     CommonModule,
     UserModule,
-    HomeModule,
+    HomeModule, 
+    ProfileModule,
     RouterModule.forChild(mainRoutes)
   ],
   providers:[
