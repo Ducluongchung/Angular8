@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from 'src/app/core/services/data.service';
 
 @Component({
   selector: 'app-role',
@@ -7,9 +8,30 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RoleComponent implements OnInit {
 
-  constructor() { }
+  public pageIndex: number = 1;
+  public pageSize: number = 20;
+  public pageDisplay: number = 10;
+  public totalRow: number;
+  public filter: string = '';
+  public roles: any;
+  constructor(private _dataService: DataService) { }
 
   ngOnInit() {
+    this.loadData();
+  }
+
+  loadData() {
+    return this._dataService.get('/api/appRole/getlistpaging?page=' + this.pageIndex + '&pageSize=' + this.pageSize + '&filter='
+      + this.filter).subscribe((res:any) => {
+        this.roles = res['Items'];  
+        this.pageIndex = res.PageIndex;
+        this.pageSize = res.PageSize;
+        this.totalRow = res.TotalRows;
+      })
+  }
+  pageChanged(event: any): void {
+    this.pageIndex = event.page;
+    this.loadData();
   }
 
 }
