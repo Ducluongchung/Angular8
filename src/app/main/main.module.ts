@@ -8,6 +8,7 @@ import {HomeModule} from './home/home.module'
 import { AuthenService } from '../core/services/authen.service';
 import { UtilityService } from '../core/services/utility.service';
 import { ProfileModule } from './profile/profile.module';
+import { RoleModule } from './role/role.module';
 @NgModule({
   declarations: [MainComponent],
   imports: [
@@ -15,6 +16,7 @@ import { ProfileModule } from './profile/profile.module';
     UserModule,
     HomeModule, 
     ProfileModule,
+    RoleModule,
     RouterModule.forChild(mainRoutes)
   ],
   providers:[
