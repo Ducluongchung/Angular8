@@ -34,7 +34,7 @@ export class DataService {
 
   // put api
   put(uri: string, data?: any) {
-    return this._http.put(SystemConstants.BASE_API, data, { headers: this.headers })
+    return this._http.put(SystemConstants.BASE_API + uri, data, { headers: this.headers })
   }
 
   // delete api

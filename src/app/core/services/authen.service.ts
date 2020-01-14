@@ -54,8 +54,8 @@ export class AuthenService {
       this._http.post(SystemConstants.BASE_API + '/api/oauth/token', body, { headers: headers })
         .subscribe((response: any) => {
           var user: LogginUser ;
-          user = JSON.parse(JSON.stringify(response))
-          console.log(user);
+          user = JSON.parse(JSON.stringify(response));
+          
           if (user && user.access_token) {
             localStorage.removeItem(SystemConstants.CURRENT_USER);
             localStorage.setItem(SystemConstants.CURRENT_USER, JSON.stringify(user));

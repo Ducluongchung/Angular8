@@ -9,7 +9,7 @@ import { DataService } from 'src/app/core/services/data.service';
 export class UserComponent implements OnInit {
 
   public pageIndex: number = 1;
-  public pageSize: number = 1;
+  public pageSize: number = 10;
   public pageDisplay: number = 10;
   public totalRow: number;
   public filter: string = '';
@@ -18,19 +18,23 @@ export class UserComponent implements OnInit {
   constructor(private _dataService: DataService) { }
 
   ngOnInit() {
-    this.getUser();
+    this.loadData();
   }
 
-  getUser() {
-    return this._dataService.get('/api/appUser/getlistpaging?page=' + this.pageIndex + '&pageSize=' + this.pageSize
-      + '&filter=' + this.filter).subscribe(res => {
-              this.users = res['Items'];
-      })
+  loadData() {
+    return this._dataService.get('/api/appUser/getlistpaging?page=' + this.pageIndex + '&pageSize=' + this.pageSize + '&filter='
+      + this.filter).subscribe((res: any) => {
+        this.users = res['Items'];
+        this.pageIndex = res.PageIndex;
+        this.pageSize = res.PageSize;
+        this.totalRow = res.TotalRows;
+      }
+      )
   }
 
   pageChanged(event: any): void {
     this.pageIndex = event.page;
-    this.getUser();
+    this.loadData()
   }
 
 }
