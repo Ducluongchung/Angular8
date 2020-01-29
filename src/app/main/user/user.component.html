@@ -21,6 +21,9 @@
     <div class="col-md-12 col-sm-12 col-xs-12">
         <div class="x_panel">
             <div class="x_title">
+
+                <button type="button" class="btn btn-primary" (click)="showChildModal()">Thêm mới</button>
+
                 <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
@@ -39,6 +42,7 @@
                 </ul>
                 <div class="clearfix"></div>
             </div>
+
             <div class="x_content">
                 <table class="table table-bordered">
                     <thead>
@@ -64,8 +68,10 @@
                             <td>{{item.Email}}</td>
                             <td>{{item.Status}}</td>
                             <td>
-                                <button class="btn btn-primary"><i class="fa fa-pencil-square-o"></i></button>
-                                <button class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                <button class="btn btn-primary" (click)="showEditModal(item.Id)"><i
+                                        class="fa fa-pencil-square-o"></i></button>
+                                <button class="btn btn-danger" (click)="deleteItem(item.Id)"><i
+                                        class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -76,6 +82,170 @@
                             (pageChanged)="pageChanged($event)" [totalItems]="totalRow"></pagination>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Modal Add and Edit-->
+<div bsModal #AddEditModal="bs-modal" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-sizes-name1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-sizes-name1" class="modal-title pull-left">{{action}} tài khoản </h4>
+                <button type="button" class="close pull-right" (click)="AddEditModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal form-label-left" novalidate #addEditForm="ngForm"
+                    (ngSubmit)="saveChange(addEditForm.form.valid)" *ngIf="entity">
+
+                    <!-- Tai khoan-->
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Tài khoản</label>
+                        <div class="col-md-6 col-sm-6 col-xs-9">
+                            <input type="hidden" [(ngModel)]="entity.Id" name="id" />
+
+                            <input type="text" #username="ngModel" [(ngModel)]="entity.UserName" required minlength="3"
+                                name="username" class="form-control">
+                            <small [hidden]="username.valid || (username.pristine && !addEditForm.submitted)"
+                                class="danger">
+                                Bạn phải nhập tên ít nhất 3 kí tự
+                            </small>
+                        </div>
+                    </div>
+
+
+                    <!-- Password-->
+                    <div class="form-group" *ngIf="!entity.Id">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Password</label>
+                        <div class="col-md-6 col-sm-6 col-xs-9">
+                            <input type="password" #password="ngModel" [(ngModel)]="entity.Password" required
+                                minlength="6" name="password" class="form-control">
+                            <small [hidden]="password.valid || (password.pristine && !addEditForm.submitted)"
+                                class="danger">
+                                Bạn phải nhập tên ít nhất 6 kí tự
+                            </small>
+                        </div>
+                    </div>
+                    <!-- Confirm  Password-->
+                    <div class="form-group" *ngIf="!entity.Id">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Xác nhận mật khẩu</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <input type="password" #confirmpassword="ngModel" [(ngModel)]="entity.ConfirmPassword"
+                                required validateEqual="password" minlength="6" name="confirmpassword"
+                                class="form-control">
+                            <small
+                                [hidden]="confirmpassword.valid || (confirmpassword.pristine && !addEditForm.submitted)"
+                                class="text-danger">
+                                Xác nhận mật khẩu sai
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Full Name-->
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Họ tên</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <input type="text" #fullname="ngModel" [(ngModel)]="entity.FullName" required minlength="3"
+                                name="fullname" class="form-control">
+                            <small [hidden]="fullname.valid || (fullname.pristine && !addEditForm.submitted)"
+                                class="danger">
+                                Bạn phải nhập tên ít nhất 3 kí tự
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- BirthDay-->
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Ngày sinh</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <input type="text" #birthday="ngModel" daterangepicker (selected)="selectedDate($event)"
+                                [options]="dateOptions" [(ngModel)]="entity.BirthDay" name="birthday"
+                                class="form-control">
+                        </div>
+                    </div>
+                    <!-- Gender-->
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12"></label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+
+                            <input type="radio" (change)="selectGender($event)" #gender="ngModel"
+                                [checked]="entity.Gender=='True'" name="gender" [ngModel]="entity.Gender" value="True"
+                                required /> Nam
+
+                            <input type="radio" (change)="selectGender($event)" #gender="ngModel"
+                                [checked]="entity.Gender=='False'" name="gender" [ngModel]="entity.Gender"
+                                value="False" /> Nữ
+
+                        </div>
+                    </div>
+
+
+                    <!-- Email-->
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Email</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <input type="text" #email="ngModel" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+                                [(ngModel)]="entity.Email" required name="email" class="form-control">
+                            <small [hidden]="email.valid || (email.pristine && !addEditForm.submitted)"
+                                class="text-danger">
+                                Bạn phải nhập email
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Address-->
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Địa chỉ</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <input type="text" #address="ngModel" [(ngModel)]="entity.Address" name="address"
+                                class="form-control">
+                        </div>
+                    </div>
+
+                    <!-- Phone-->
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Số điện thoại</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <input type="text" #phonenumber="ngModel" [(ngModel)]="entity.PhoneNumber"
+                                name="phonenumber" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Avatar</label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="file" #avatar name="avatar" class="form-control">
+                            <p class="help-block label label-danger"> chỉ hỗ trợ định dạng *.png, *.jpg, *.jpeg </p>
+                            <input type="hidden" [(ngModel)]="entity.Avatar" name="avatarUrl" />
+                        </div>
+
+                        <div class="col-md-3 col-sm-3 col-xs-12" *ngIf="entity.Avatar">
+                            <img [src]="entity.Avatar" width="128" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Thuộc nhóm</label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                            <ss-multiselect-dropdown [ngModelOptions]="{standalone: true}" [options]="allRoles"
+                                [(ngModel)]="myRoles"></ss-multiselect-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="ln_solid"></div>
+
+                    <div class="form-group">
+                        <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                            <button type="button" class="btn btn-primary" (click)="AddEditModal.hide()">Hủy bỏ</button>
+                            <button type="submit" class="btn btn-success" [disabled]='!addEditForm.form.valid'>Cập
+                                nhật</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
