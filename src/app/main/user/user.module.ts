@@ -10,6 +10,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { FormsModule } from '@angular/forms';
 import { MultiselectDropdownModule } from 'angular-2-dropdown-multiselect';
 import { Daterangepicker } from 'ng2-daterangepicker';
+import { UploadService } from 'src/app/core/services/upload.service';
 
 const userRoutes: Routes = [
   { path: '', redirectTo: 'index', pathMatch: 'full' },
@@ -31,7 +32,7 @@ const userRoutes: Routes = [
     FormsModule,
     RouterModule.forChild(userRoutes)
   ],
-  providers:[DataService,NotificationService]
+  providers:[DataService,NotificationService,UploadService]
 
 })
 export class UserModule { }

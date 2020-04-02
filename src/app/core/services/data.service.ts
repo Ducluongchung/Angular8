@@ -12,13 +12,13 @@ import { Observable } from 'rxjs';
 })
 export class DataService {
 
-  private headers = new HttpHeaders();
-  constructor(private _http: HttpClient,
+    private headers = new HttpHeaders();
+    constructor(private _http: HttpClient,
     private _authenService: AuthenService,
     private _notificationService: NotificationService,
     private _utilityService: UtilityService) {
-    this.headers = this.headers.set('Content-Type', 'application/json');
-    this.headers = this.headers.set("Authorization", "Bearer " + _authenService.getLoggedInUser().access_token);
+      this.headers = this.headers.set('Content-Type', 'application/json');
+      this.headers = this.headers.set("Authorization", "Bearer " + _authenService.getLoggedInUser().access_token);
   }
   // get api
   get(uri: string) {
@@ -54,7 +54,6 @@ export class DataService {
 
   }
 
-  // post file
   postFile(uri: string, data?: any) {
     let newHeader = new HttpHeaders();
     newHeader.set("Authorization", "Bearer " + this._authenService.getLoggedInUser().access_token);

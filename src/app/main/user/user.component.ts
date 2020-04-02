@@ -4,6 +4,7 @@ import { ModalDirective } from 'ngx-bootstrap/modal/public_api';
 import { MessageContstants } from 'src/app/core/common/message.constant';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import * as moment from 'moment';
+import { UploadService } from 'src/app/core/services/upload.service';
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
@@ -11,9 +12,10 @@ import * as moment from 'moment';
 })
 export class UserComponent implements OnInit {
   @ViewChild('AddEditModal', { static: false }) childModal: ModalDirective;
+  @ViewChild('avatar', { static: false }) avatar;
   public myRoles: string[] = [];
   public pageIndex: number = 1;
-  public pageSize: number = 10;
+  public pageSize: number = 10; 
   public pageDisplay: number = 10;
   public totalRow: number;
   public filter: string = '';
@@ -21,7 +23,8 @@ export class UserComponent implements OnInit {
   public action: string;
   public entity: any;
   public allRoles: any[];
-  constructor(private _dataService: DataService, private _notificationService: NotificationService) { }
+  constructor(private _dataService: DataService, private _notificationService: NotificationService,
+    private _uploadService: UploadService) { }
 
   public dateOptions: any = {
     locale: { format: 'DD/MM/YYYY' },
@@ -92,21 +95,36 @@ export class UserComponent implements OnInit {
 
   saveChange(valid: boolean) {
     if (valid) {
-      if (this.entity.Id == undefined) {
-        this.entity.Roles = this.myRoles;
-        this._dataService.post('/api/appUser/add', JSON.stringify(this.entity)).subscribe((response: any) => {
-          this.loadData();
-          this.hideChildModal();
-          this._notificationService.printSuccessMessage(MessageContstants.CREATED_OK_MSG);
-        }, error => this._dataService.handleError(error));
+      this.entity.Roles = this.myRoles;
+      let fi = this.avatar.nativeElement;
+      if (fi.files.length > 0) {
+        this._uploadService.postWithFile('/api/upload/saveImage?type=avatar',null,fi.files).then((imageUrl: string)=>{
+            this.entity.Avatar = imageUrl;
+        }).then(()=>{
+          this.saveData();
+        })
       }
       else{
-        this._dataService.put('/api/appUser/update', JSON.stringify(this.entity)).subscribe((response: any) => {
-          this.loadData();
-          this.hideChildModal();
-          this._notificationService.printSuccessMessage(MessageContstants.UPDATED_OK_MSG);
-        }, error => this._dataService.handleError(error));
+        this.saveData();
       }
+    }
+  }
+
+  saveData() {
+    if (this.entity.Id == undefined) {
+      this.entity.Roles = this.myRoles;
+      this._dataService.post('/api/appUser/add', JSON.stringify(this.entity)).subscribe((response: any) => {
+        this.loadData();
+        this.hideChildModal();
+        this._notificationService.printSuccessMessage(MessageContstants.CREATED_OK_MSG);
+      }, error => this._dataService.handleError(error));
+    }
+    else {
+      this._dataService.put('/api/appUser/update', JSON.stringify(this.entity)).subscribe((response: any) => {
+        this.loadData();
+        this.hideChildModal();
+        this._notificationService.printSuccessMessage(MessageContstants.UPDATED_OK_MSG);
+      }, error => this._dataService.handleError(error));
     }
   }
 
